@@ -66,3 +66,28 @@ df_receipt[listP006].query(
     'customer_id == "CS018205000001"').query('amount >= 1000 or quantity >= 5')
 
 # %%
+#P-007: レシート明細のデータフレーム（df_receipt）から売上日（sales_ymd）、顧客ID（customer_id）、商品コード（product_cd）、売上金額（amount）の順に列を指定し、以下の条件を満たすデータを抽出せよ。
+#顧客ID（customer_id）が"CS018205000001"
+#売上金額（amount）が1, 000以上2, 000以下
+df_receipt[listP002]\
+    .query('customer_id == "CS018205000001"')\
+        .query('amount >= 1000 and amount <= 2000')
+# %%
+#P-008: レシート明細のデータフレーム（df_receipt）から売上日（sales_ymd）、顧客ID（customer_id）、商品コード（product_cd）、売上金額（amount）の順に列を指定し、以下の条件を満たすデータを抽出せよ。
+#顧客ID（customer_id）が"CS018205000001"
+#商品コード（product_cd）が"P071401019"以外
+df_receipt[listP002].\
+    query('customer_id == "CS018205000001"')\
+        .query('product_cd != "P071401019"')
+
+# %%
+#P-009: 以下の処理において、出力結果を変えずにORをANDに書き換えよ。
+#df_store.query('not(prefecture_cd == "13" | floor_area > 900)')
+df_store.query('not(prefecture_cd == "13") and not(floor_area > 900)')
+
+# %%
+#解き直し2021年5月28日
+#P-010: 店舗データフレーム（df_store）から、店舗コード（store_cd）が"S14"で始まるものだけ全項目抽出し、10件だけ表示せよ。
+df_store.query('store_cd.str.startswith("S14")',engine='python').head(10)
+
+# %%
