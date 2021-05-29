@@ -38,7 +38,8 @@ df_receipt[listP002].head(10)
 
 # %%
 # P-003: レシート明細のデータフレーム（df_receipt）から売上日（sales_ymd）、顧客ID（customer_id）、商品コード（product_cd）、売上金額（amount）の順に列を指定し、10件表示させよ。ただし、sales_ymdはsales_dateに項目名を変更しながら抽出すること。
-df_receipt = df_receipt.rename(columns={"sales_ymd": "sales_date"})
+df_receipt = df_receipt\
+    .rename(columns={"sales_ymd": "sales_date"})
 listP002 = ["sales_date", "customer_id", "product_cd", "amount"]
 
 df_receipt[listP002].head(10)
@@ -53,7 +54,8 @@ listP002 = ["sales_ymd", "customer_id", "product_cd", "amount"]
 df_receipt[listP002].query('customer_id == "CS018205000001"')
 # %%
 #P-005: レシート明細のデータフレーム（df_receipt）から売上日（sales_ymd）、顧客ID（customer_id）、商品コード（product_cd）、売上金額（amount）の順に列を指定し、以下の条件を満たすデータを抽出せよ。
-df_receipt[listP002].query('customer_id == "CS018205000001"').query('amount >= 1000')
+df_receipt[listP002].\
+    query('customer_id == "CS018205000001" and amount >= 1000')
 
 # %%
 #P-006: レシート明細データフレーム「df_receipt」から売上日（sales_ymd）、顧客ID（customer_id）、商品コード（product_cd）、売上数量（quantity）、売上金額（amount）の順に列を指定し、以下の条件を満たすデータを抽出せよ。
@@ -62,8 +64,8 @@ df_receipt[listP002].query('customer_id == "CS018205000001"').query('amount >= 1
 
 listP006 = ["sales_ymd", "customer_id", "product_cd","quantity","amount"]
 
-df_receipt[listP006].query(
-    'customer_id == "CS018205000001"').query('amount >= 1000 or quantity >= 5')
+df_receipt[listP006].\
+    query('customer_id == "CS018205000001" and (amount >= 1000 or quantity >= 5)')
 
 # %%
 #P-007: レシート明細のデータフレーム（df_receipt）から売上日（sales_ymd）、顧客ID（customer_id）、商品コード（product_cd）、売上金額（amount）の順に列を指定し、以下の条件を満たすデータを抽出せよ。
@@ -110,7 +112,70 @@ df_customer.query('status_cd.str.contains("[1-9]$")',engine='python').head(10)
 #解き直し5月29日
 #P-015:
 #df_customer.query('status_cd.str.contains("^[A-F]") and status_cd.str.contains("[1-9]$")',engine='python').head(10)
-
 df_customer.query(
     'status_cd.str.contains("^[A-F].*[1-9]$")', engine='python').head(10)
+
 # %%
+#P-016:
+df_store.query('tel_no.str.contains("^...[-]...[-]....$")',engine='python')
+
+# %%
+#P-017:
+df_customer.sort_values('birth_day').head(10)
+# %%
+#P-018:
+df_customer.sort_values('birth_day',ascending= False).head(10)
+# %%
+#解き直し2021年5月28日
+#P-019:
+ans = df_receipt[["customer_id", "amount"]].sort_values('amount',ascending=False)
+
+rank = pd.RangeIndex(start=1, stop=len(ans) + 1, step=1)
+ans["rank"]=rank
+
+print(ans.head(10))
+
+"""公式回答
+df_tmp = pd.concat([df_receipt[['customer_id', 'amount']],\
+    df_receipt['amount'].rank(method='min', ascending=False)], axis=1)
+
+df_tmp.columns = ['customer_id', 'amount', 'ranking']
+df_tmp.sort_values("ranking", ascending=True).head(10)
+"""
+#%%
+#P-020:
+ans = df_receipt[["customer_id", "amount"]].sort_values('amount', ascending=False)
+
+rank = pd.RangeIndex(start=1, stop=len(ans) + 1, step=1)
+ans["rank"] = rank
+
+print(ans.head(10))
+
+"""公式回答
+df_tmp = pd.concat([df_receipt[['customer_id', 'amount']],\
+    df_receipt['amount'].rank(method='first', ascending=False)], axis=1)
+
+df_tmp.columns = ['customer_id', 'amount', 'ranking']
+df_tmp.sort_values("ranking", ascending=True).head(10)
+"""
+# %%
+#P-021:
+print(len(df_receipt))
+
+# %%
+#P-022:
+print(len(df_receipt['customer_id'].unique()))
+
+# %%
+#P-023:
+ans = df_receipt.groupby("store_cd")
+print(ans[["amount","quantity"]].sum())
+
+# %%
+#解き直し2021年5月28日
+#P-024:
+ans = df_receipt.groupby("customer_id")
+print(ans.sales_ymd.max().head(10))
+
+#模範回答
+#df_receipt.groupby('customer_id').sales_ymd.max().reset_index().head(10)
