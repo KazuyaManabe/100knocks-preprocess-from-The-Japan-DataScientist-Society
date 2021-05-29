@@ -91,3 +91,26 @@ df_store.query('not(prefecture_cd == "13") and not(floor_area > 900)')
 df_store.query('store_cd.str.startswith("S14")',engine='python').head(10)
 
 # %%
+#P-011:
+df_customer.query('customer_id.str.endswith("1")',engine='python').head(10)
+# %%
+#P-012:
+df_store.query('address.str.contains("横浜市")', engine='python')
+
+#%%
+#解き直し5月29日
+#P-013:
+df_customer.query("status_cd.str.contains('^[A-F]')", engine='python').head(10)
+#%%
+#解き直し5月29日
+#P-014:
+df_customer.query('status_cd.str.contains("[1-9]$")',engine='python').head(10)
+
+# %%
+#解き直し5月29日
+#P-015:
+#df_customer.query('status_cd.str.contains("^[A-F]") and status_cd.str.contains("[1-9]$")',engine='python').head(10)
+
+df_customer.query(
+    'status_cd.str.contains("^[A-F].*[1-9]$")', engine='python').head(10)
+# %%
