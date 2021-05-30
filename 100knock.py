@@ -4,6 +4,7 @@
 # %%
 import os
 import pandas as pd
+from pandas.core.reshape.concat import concat
 import numpy as np
 from datetime import datetime, date
 from dateutil.relativedelta import relativedelta
@@ -179,3 +180,59 @@ print(ans.sales_ymd.max().head(10))
 
 #模範回答
 #df_receipt.groupby('customer_id').sales_ymd.max().reset_index().head(10)
+
+# %%
+#P-025:
+df_receipt.groupby("customer_id").sales_ymd.min().head(10)
+
+# %%
+#P-026:
+atarashi = df_receipt.groupby("customer_id").sales_ymd.max()
+furui = df_receipt.groupby("customer_id").sales_ymd.min()
+
+df_tmp = pd.concat([atarashi,furui],axis=1)
+df_tmp.columns = ['latest', 'oldest']
+
+df_tmp[df_tmp.latest != df_tmp.oldest].head(10)
+
+# %%
+#P-027:
+df_receipt.groupby("store_cd").amount.mean()\
+    .sort_values(ascending=False).head(5)
+
+# %%
+#P-028:
+df_receipt.groupby("store_cd").amount.median().sort_values(ascending=False).head(5)
+# %%
+#P-029:
+df_receipt.groupby("store_cd")['product_cd'].apply(lambda x:x.mode())
+
+# %%
+#5月30日解き直し
+#P-030:
+df_receipt.groupby("store_cd").amount.var(ddof=0).sort_values(ascending=False).head(5)
+
+# %%
+#5月30日解き直し
+#P-031:
+df_receipt.groupby("store_cd").amount.std(ddof=0).sort_values(ascending=False).head(5)
+# %%
+#P-032:
+df_receipt.amount.quantile([0,0.25,0.5,0.75,1])
+
+# %%
+#P-033:
+df_receipt.groupby("store_cd").amount.mean()\
+    [df_receipt.groupby("store_cd").amount.mean() >= 330]
+
+#df_receipt.groupby("store_cd").amount.mean().reset_index().query('amount>= 330')
+
+# %%
+#5月30日解き直し
+#P-034:
+a = df_receipt.query('customer_id.str.contains("^[A-Y]")', engine='python')
+b = sum(a["amount"])
+c = len(a["customer_id"].unique())
+
+print(b/c)
+# %%
