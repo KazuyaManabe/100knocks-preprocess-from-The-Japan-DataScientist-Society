@@ -235,4 +235,18 @@ b = sum(a["amount"])
 c = len(a["customer_id"].unique())
 
 print(b/c)
+
+#公式回答
+#df_receipt.query('not customer_id.str.startswith("Z")', engine='python').groupby("customer_id").amount.sum().mean()
+
+# %%
+#5月30日解き直し
+#P-035:
+a = df_receipt[~ df_receipt["customer_id"].str.startswith("Z")].groupby("customer_id").amount.sum()
+
+b = a.mean()
+c = a.reset_index()
+
+c[c["amount"] >= b].head(10)
+
 # %%
