@@ -257,4 +257,43 @@ c = a.reset_index()
 
 c[c["amount"] >= b].head(10)
 
+"""
+notZ_list = df_receipt.query('not customer_id.str.startswith("Z")',
+                             engine="python").groupby("customer_id").sum("amount").reset_index()
+notZ_list_mean = notZ_list["amount"].mean()
+
+notZ_list[notZ_list["amount"]>=notZ_list_mean].head(10)
+"""
+
+# %%
+# P-036:
+columns_list = []
+for i in df_receipt.columns:
+    columns_list.append(i)
+columns_list.append("store_name")
+
+ans = pd.concat([df_receipt, df_store], axis=1, join="inner",
+                keys=("store_cd", "store_name"))
+ans[columns_list].head(10)
+
+# %%
+# P-037:
+columns_list = []
+for i in df_product.columns:
+    columns_list.append(i)
+
+columns_list.append("category_small_name")
+
+ans = pd.concat([df_product, df_category], axis=1, join="inner")
+ans[columns_list].head()
+
+# %%
+# P-038:
+a = df_customer.query(
+    'not customer_id.str.startswith("Z") and gender_cd==1', engine="python")
+customer_receipt = pd.concat(
+    [df_receipt, a], axis=1, join="inner", keys="customer_id")
+
+customer_receipt.groupby("customer_id").amount.sum()
+
 # %%
