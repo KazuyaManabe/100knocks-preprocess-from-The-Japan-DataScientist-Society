@@ -267,15 +267,7 @@ notZ_list[notZ_list["amount"]>=notZ_list_mean].head(10)
 
 # %%
 # P-036:
-columns_list = []
-for i in df_receipt.columns:
-    columns_list.append(i)
-columns_list.append("store_name")
-
-ans = pd.concat([df_receipt, df_store], axis=1, join="inner",
-                keys=("store_cd", "store_name"))
-ans[columns_list].head(10)
-
+pd.merge(df_receipt,df_store[["store_cd","store_name"]],how="inner",on="store_cd").head(10)
 # %%
 # P-037:
 columns_list = []
@@ -296,4 +288,15 @@ customer_receipt = pd.concat(
 
 customer_receipt.groupby("customer_id").amount.sum()
 
+# %%
+#P-039
+ans1 = df_receipt[~df_receipt.duplicated(subset=["customer_id","sales_ymd"])].reset_index().query('not customer_id.str.startswith("Z")',engine = "python").groupby("customer_id").sales_ymd.count().reset_index().sort_values("sales_ymd",ascending=False).head(20)
+
+ans2 = df_receipt.query('not customer_id.str.startswith("Z")', engine="python").groupby(
+    "customer_id").amount.sum().reset_index().sort_values("amount", ascending=False).head(20)
+
+pd.merge(ans2,ans1,how = "outer",on="customer_id")
+# %%
+#P-40
+len(df_store["store_cd"].unique())*len(df_product["product_cd"].unique())
 # %%
