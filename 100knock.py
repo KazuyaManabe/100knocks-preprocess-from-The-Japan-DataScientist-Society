@@ -300,3 +300,25 @@ pd.merge(ans2,ans1,how = "outer",on="customer_id")
 #P-40
 len(df_store["store_cd"].unique())*len(df_product["product_cd"].unique())
 # %%
+#P-41
+df_receipt.groupby('sales_ymd').amount.sum().reset_index().diff().head(10)
+
+#%%
+#P-42
+day = df_receipt.groupby('sales_ymd').amount.sum().reset_index()
+
+day1 = day
+day1.loc["dammy"] = ["dammy","dammy"]
+day1 = day[1:].reset_index(drop = True)
+
+day2 = day1
+day2.loc["dammy"] = ["dammy", "dammy"]
+day2 = day2[1:].reset_index(drop=True)
+
+day3 = day2
+day3.loc["dammy"] = ["dammy", "dammy"]
+day3 = day3[1:].reset_index(drop=True)
+
+print(day2)
+#pd.merge(day,day1)
+# %%
