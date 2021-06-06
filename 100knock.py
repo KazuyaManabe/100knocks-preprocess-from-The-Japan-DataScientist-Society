@@ -278,15 +278,14 @@ columns_list.append("category_small_name")
 
 ans = pd.concat([df_product, df_category], axis=1, join="inner")
 ans[columns_list].head()
-
-# %%
+#%%
+df_receipt
+#%%
 # P-038:
-a = df_customer.query(
-    'not customer_id.str.startswith("Z") and gender_cd==1', engine="python")
-customer_receipt = pd.concat(
-    [df_receipt, a], axis=1, join="inner", keys="customer_id")
+amo = df_receipt.groupby("customer_id").amount.sum().reset_index()
+cus = df_customer.query('gender_cd == 1 and not customer_id.str.startswith("Z")',engine = "python").reset_index(drop=True)
 
-customer_receipt.groupby("customer_id").amount.sum()
+pd.merge(cus["customer_id"],amo,how="left",on="customer_id").fillna(0).head(10)
 
 # %%
 #P-039
@@ -305,20 +304,30 @@ df_receipt.groupby('sales_ymd').amount.sum().reset_index().diff().head(10)
 
 #%%
 #P-42
-day = df_receipt.groupby('sales_ymd').amount.sum().reset_index()
+df_receipt.groupby("sales_ymd").amount.sum().reset_index()
 
-day1 = day
-day1.loc["dammy"] = ["dammy","dammy"]
-day1 = day[1:].reset_index(drop = True)
-
-day2 = day1
-day2.loc["dammy"] = ["dammy", "dammy"]
-day2 = day2[1:].reset_index(drop=True)
-
-day3 = day2
-day3.loc["dammy"] = ["dammy", "dammy"]
-day3 = day3[1:].reset_index(drop=True)
-
-print(day2)
 #pd.merge(day,day1)
+# %%
+#P-042
+SA = df_receipt.groupby("sales_ymd").amount.sum().reset_index()
+ans = pd.concat([SA,SA.shift(1)],axis=1)
+for i in range(2,4):
+    ans = pd.concat([ans, SA.shift(i)], axis=1)
+ans.columns = ["sales_ymd","amount","lag_ymd_1", "lag_amount_1", "lag_ymd_2",
+                   "lag_amount_2", "lag_ymd_3", "lag_amount_3"]
+
+ans.dropna().head(10)
+# %%
+#6月6日一応やり直し
+#P-043
+Money = df_receipt.groupby("customer_id").amount.sum().reset_index()
+Money
+#%%
+Cus = pd.concat([df_customer[["customer_id","gender_cd"]], df_customer["age"]//10 * 10],axis=1).reset_index(drop=True)
+Cus
+# %%
+ans = pd.merge(Cus,Money,how="left",on="customer_id").reset_index(drop=True)
+ans
+# %%
+df_sales_summary = pd.pivot_table(ans,index="age",columns="gender_cd",values="amount",aggfunc='sum')
 # %%
