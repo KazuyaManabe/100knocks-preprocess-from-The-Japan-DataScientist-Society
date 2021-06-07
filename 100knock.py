@@ -267,7 +267,8 @@ notZ_list[notZ_list["amount"]>=notZ_list_mean].head(10)
 
 # %%
 # P-036:
-pd.merge(df_receipt,df_store[["store_cd","store_name"]],how="inner",on="store_cd").head(10)
+pd.merge(df_receipt, df_store[["store_cd", "store_name"]],
+         how="inner", on="store_cd").head(10)
 # %%
 # P-037:
 columns_list = []
@@ -278,56 +279,78 @@ columns_list.append("category_small_name")
 
 ans = pd.concat([df_product, df_category], axis=1, join="inner")
 ans[columns_list].head()
-#%%
+# %%
 df_receipt
-#%%
+# %%
 # P-038:
 amo = df_receipt.groupby("customer_id").amount.sum().reset_index()
-cus = df_customer.query('gender_cd == 1 and not customer_id.str.startswith("Z")',engine = "python").reset_index(drop=True)
+cus = df_customer.query('gender_cd == 1 and not customer_id.str.startswith("Z")',
+                        engine="python").reset_index(drop=True)
 
-pd.merge(cus["customer_id"],amo,how="left",on="customer_id").fillna(0).head(10)
+pd.merge(cus["customer_id"], amo, how="left",
+         on="customer_id").fillna(0).head(10)
 
 # %%
-#P-039
-ans1 = df_receipt[~df_receipt.duplicated(subset=["customer_id","sales_ymd"])].reset_index().query('not customer_id.str.startswith("Z")',engine = "python").groupby("customer_id").sales_ymd.count().reset_index().sort_values("sales_ymd",ascending=False).head(20)
+# P-039
+ans1 = df_receipt[~df_receipt.duplicated(subset=["customer_id", "sales_ymd"])].reset_index().query(
+    'not customer_id.str.startswith("Z")', engine="python").groupby("customer_id").sales_ymd.count().reset_index().sort_values("sales_ymd", ascending=False).head(20)
 
 ans2 = df_receipt.query('not customer_id.str.startswith("Z")', engine="python").groupby(
     "customer_id").amount.sum().reset_index().sort_values("amount", ascending=False).head(20)
 
-pd.merge(ans2,ans1,how = "outer",on="customer_id")
+pd.merge(ans2, ans1, how="outer", on="customer_id")
 # %%
-#P-40
+# P-40
 len(df_store["store_cd"].unique())*len(df_product["product_cd"].unique())
 # %%
-#P-41
+# P-41
 df_receipt.groupby('sales_ymd').amount.sum().reset_index().diff().head(10)
 
-#%%
-#P-42
+# %%
+# P-42
 df_receipt.groupby("sales_ymd").amount.sum().reset_index()
 
-#pd.merge(day,day1)
+# pd.merge(day,day1)
 # %%
-#P-042
+# P-042
 SA = df_receipt.groupby("sales_ymd").amount.sum().reset_index()
-ans = pd.concat([SA,SA.shift(1)],axis=1)
-for i in range(2,4):
+ans = pd.concat([SA, SA.shift(1)], axis=1)
+for i in range(2, 4):
     ans = pd.concat([ans, SA.shift(i)], axis=1)
-ans.columns = ["sales_ymd","amount","lag_ymd_1", "lag_amount_1", "lag_ymd_2",
-                   "lag_amount_2", "lag_ymd_3", "lag_amount_3"]
+ans.columns = ["sales_ymd", "amount", "lag_ymd_1", "lag_amount_1", "lag_ymd_2",
+               "lag_amount_2", "lag_ymd_3", "lag_amount_3"]
 
 ans.dropna().head(10)
 # %%
-#6月6日一応やり直し
-#P-043
+# 6月6日一応やり直し
+# P-043
 Money = df_receipt.groupby("customer_id").amount.sum().reset_index()
 Money
-#%%
-Cus = pd.concat([df_customer[["customer_id","gender_cd"]], df_customer["age"]//10 * 10],axis=1).reset_index(drop=True)
+# %%
+Cus = pd.concat([df_customer[["customer_id", "gender_cd"]],
+                df_customer["age"]//10 * 10], axis=1).reset_index(drop=True)
 Cus
 # %%
-ans = pd.merge(Cus,Money,how="left",on="customer_id").reset_index(drop=True)
+ans = pd.merge(Cus, Money, how="left", on="customer_id").reset_index(drop=True)
 ans
 # %%
-df_sales_summary = pd.pivot_table(ans,index="age",columns="gender_cd",values="amount",aggfunc='sum')
+df_sales_summary = pd.pivot_table(
+    ans, index="age", columns="gender_cd", values="amount", aggfunc='sum')
+print(df_sales_summary)
+
+# %%
+# ６月7日題意読み解きやり直し
+# P-044
+ans.iloc[ans["gender_cd"] == 0, 1] = "00"
+ans.iloc[ans["gender_cd"] == 1, 1] = "01"
+ans.iloc[ans["gender_cd"] == 9, 1] = "99"
+ans
+
+pd.pivot_table(ans, index=["age", "gender_cd"],
+               values="amount", aggfunc="sum").reset_index()
+# %%
+# ６月7日日付への変換方法確認
+# P-45
+pd.to_datetime(df_customer['birth_day']).dt.strftime('%Y%m%d')
+
 # %%
