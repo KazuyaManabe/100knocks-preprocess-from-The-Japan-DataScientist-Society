@@ -351,28 +351,56 @@ pd.pivot_table(ans, index=["age", "gender_cd"],
 # %%
 # ６月7日日付への変換方法確認
 # P-045
-#df_customer.dtypes
+# df_customer.dtypes
 pd.to_datetime(df_customer['birth_day']).dt.strftime('%Y%m%d')
 
 # %%
-#P-046
+# P-046
 time = pd.to_datetime(df_customer["application_date"].astype("str"))
-pd.concat([df_customer["customer_id"],time],axis=1).head(10)
+pd.concat([df_customer["customer_id"], time], axis=1).head(10)
 
 # %%
 # P-047
-#6月8日やり直し
-#df_receipt.dtypes
-#df_receipt
+# 6月8日やり直し
+# df_receipt.dtypes
+# df_receipt
 time = pd.to_datetime(df_receipt["sales_ymd"].astype("str"))
-pd.concat([df_receipt[["receipt_no","receipt_sub_no"]], time], axis=1).head(10)
+pd.concat([df_receipt[["receipt_no", "receipt_sub_no"]], time], axis=1).head(10)
 
 # %%
 # P-048
-#6月8日やり直し
-#df_receipt.dtypes
-time = pd.to_datetime(df_receipt["sales_epoch"],unit="s")
+# 6月8日やり直し
+# df_receipt.dtypes
+time = pd.to_datetime(df_receipt["sales_epoch"], unit="s")
 pd.concat([df_receipt[["receipt_no", "receipt_sub_no"]], time], axis=1).head(10)
 
 # %%
 # P-049
+time = pd.to_datetime(df_receipt["sales_epoch"], unit="s").dt.strftime('%Y')
+pd.concat([df_receipt[["receipt_no", "receipt_sub_no"]], time], axis=1).head(10)
+
+# %%
+# P-050:
+time = pd.to_datetime(df_receipt["sales_epoch"], unit="s").dt.strftime('%m')
+pd.concat([df_receipt[["receipt_no", "receipt_sub_no"]], time], axis=1).head(10)
+
+# %%
+# P-051
+time = pd.to_datetime(df_receipt["sales_epoch"], unit="s").dt.strftime('%d')
+pd.concat([df_receipt[["receipt_no", "receipt_sub_no"]], time], axis=1).head(10)
+
+# %%
+# P-052
+df_tmp = df_receipt.query('not customer_id.str.startswith("Z")', engine="python").groupby(
+    "customer_id").amount.sum().reset_index()
+
+
+df_tmp.iloc[df_tmp["amount"] <= 2000, 1] = 0
+df_tmp.iloc[df_tmp["amount"] > 2000, 1] = 1
+
+pd.concat([df_receipt.query('not customer_id.str.startswith("Z")', engine="python").groupby(
+    "customer_id").amount.sum().reset_index(), df_tmp["amount"]], axis=1).head(10)
+
+# %%
+
+# %%
