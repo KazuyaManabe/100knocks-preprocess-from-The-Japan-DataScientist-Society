@@ -350,7 +350,29 @@ pd.pivot_table(ans, index=["age", "gender_cd"],
                values="amount", aggfunc="sum").reset_index()
 # %%
 # ６月7日日付への変換方法確認
-# P-45
+# P-045
+#df_customer.dtypes
 pd.to_datetime(df_customer['birth_day']).dt.strftime('%Y%m%d')
 
 # %%
+#P-046
+time = pd.to_datetime(df_customer["application_date"].astype("str"))
+pd.concat([df_customer["customer_id"],time],axis=1).head(10)
+
+# %%
+# P-047
+#6月8日やり直し
+#df_receipt.dtypes
+#df_receipt
+time = pd.to_datetime(df_receipt["sales_ymd"].astype("str"))
+pd.concat([df_receipt[["receipt_no","receipt_sub_no"]], time], axis=1).head(10)
+
+# %%
+# P-048
+#6月8日やり直し
+#df_receipt.dtypes
+time = pd.to_datetime(df_receipt["sales_epoch"],unit="s")
+pd.concat([df_receipt[["receipt_no", "receipt_sub_no"]], time], axis=1).head(10)
+
+# %%
+# P-049
