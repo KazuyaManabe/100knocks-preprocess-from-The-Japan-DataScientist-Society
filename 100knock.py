@@ -40,8 +40,7 @@ df_receipt[listP002].head(10)
 # %%
 # 2021年6月2日解きなおし
 # P-003: レシート明細のデータフレーム（df_receipt）から売上日（sales_ymd）、顧客ID（customer_id）、商品コード（product_cd）、売上金額（amount）の順に列を指定し、10件表示させよ。ただし、sales_ymdはsales_dateに項目名を変更しながら抽出すること。
-df_receipt = df_receipt\
-    .rename(columns={"sales_ymd": "sales_date"})
+df_receipt = df_receipt.rename(columns={"sales_ymd": "sales_date"})
 listP002 = ["sales_date", "customer_id", "product_cd", "amount"]
 
 df_receipt[listP002].head(10)
@@ -57,8 +56,8 @@ listP002 = ["sales_ymd", "customer_id", "product_cd", "amount"]
 df_receipt[listP002].query('customer_id == "CS018205000001"')
 # %%
 # P-005: レシート明細のデータフレーム（df_receipt）から売上日（sales_ymd）、顧客ID（customer_id）、商品コード（product_cd）、売上金額（amount）の順に列を指定し、以下の条件を満たすデータを抽出せよ。
-df_receipt[listP002].\
-    query('customer_id == "CS018205000001" and amount >= 1000')
+df_receipt[listP002].query(
+    'customer_id == "CS018205000001" and amount >= 1000')
 
 # %%
 # P-006: レシート明細データフレーム「df_receipt」から売上日（sales_ymd）、顧客ID（customer_id）、商品コード（product_cd）、売上数量（quantity）、売上金額（amount）の順に列を指定し、以下の条件を満たすデータを抽出せよ。
