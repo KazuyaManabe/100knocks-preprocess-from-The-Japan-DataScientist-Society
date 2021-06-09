@@ -401,5 +401,12 @@ pd.concat([df_receipt.query('not customer_id.str.startswith("Z")', engine="pytho
     "customer_id").amount.sum().reset_index(), df_tmp["amount"]], axis=1).head(10)
 
 # %%
+# 053
+df_tmp = df_customer[["customer_id", "postal_cd"]].copy()
+df_tmp["postal_flg"] = df_tmp["postal_cd"].apply(
+    lambda x: 1 if 100 <= int(x[0:3]) <= 209 else 0)
+
+pd.merge(df_tmp, df_receipt, how="inner",
+         on="customer_id").groupby("postal_flg").agg({"customer_id": "nunique"})
 
 # %%
