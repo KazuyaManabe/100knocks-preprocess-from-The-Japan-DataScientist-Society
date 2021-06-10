@@ -410,3 +410,22 @@ pd.merge(df_tmp, df_receipt, how="inner",
          on="customer_id").groupby("postal_flg").agg({"customer_id": "nunique"})
 
 # %%
+# 054
+tmp = df_customer[["customer_id","address"]].copy()
+tmp["address_flg"] = df_customer["address"].apply(lambda x: {str(x[0:2]) == "埼玉":11}, {str(x[0:2]) == "千葉":12})
+
+
+def func_open_2(x):
+    if x < 19000:
+        return np.NaN
+    elif x >= 19000 and x < 20000:
+        return 19500
+    else:
+        return x
+
+
+sample_data['open_2'] = sample_data['open'].apply(func_open_2)
+
+
+
+# %%
