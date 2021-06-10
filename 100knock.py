@@ -412,20 +412,22 @@ pd.merge(df_tmp, df_receipt, how="inner",
 # %%
 # 054
 tmp = df_customer[["customer_id","address"]].copy()
-tmp["address_flg"] = df_customer["address"].apply(lambda x: {str(x[0:2]) == "埼玉":11}, {str(x[0:2]) == "千葉":12})
 
-
-def func_open_2(x):
-    if x < 19000:
-        return np.NaN
-    elif x >= 19000 and x < 20000:
-        return 19500
+def func_address_flg(x):
+    if x[0:2] == "東京":
+        return 13
+    elif x[0:2] == "千葉":
+        return 12
+    elif x[0:2] == "埼玉":
+        return 11
     else:
-        return x
+        return 14
 
+tmp["address_flg"] = df_customer["address"].apply(func_address_flg)
+tmp
 
-sample_data['open_2'] = sample_data['open'].apply(func_open_2)
-
-
+#模範回答
+tmp["address_flg"] = df_customer["address"].str[0:2].map({"埼玉":"11","千葉":"12","東京":"13","神奈":"14"})
+tmp
 
 # %%
