@@ -411,7 +411,8 @@ pd.merge(df_tmp, df_receipt, how="inner",
 
 # %%
 # 054
-tmp = df_customer[["customer_id","address"]].copy()
+tmp = df_customer[["customer_id", "address"]].copy()
+
 
 def func_address_flg(x):
     if x[0:2] == "東京":
@@ -423,11 +424,51 @@ def func_address_flg(x):
     else:
         return 14
 
+
 tmp["address_flg"] = df_customer["address"].apply(func_address_flg)
 tmp
 
-#模範回答
-tmp["address_flg"] = df_customer["address"].str[0:2].map({"埼玉":"11","千葉":"12","東京":"13","神奈":"14"})
+# 模範回答
+tmp["address_flg"] = df_customer["address"].str[0:2].map(
+    {"埼玉": "11", "千葉": "12", "東京": "13", "神奈": "14"})
 tmp
+
+# %%
+# 055
+ans = df_receipt.groupby("customer_id").amount.sum().reset_index()
+points = ans.quantile([0.25, 0.5, 0.75])
+
+
+def func_25points(x):
+    if x < points.iloc[0][0]:
+        return "1"
+    elif x < points.iloc[1][0]:
+        return "2"
+    elif x < points.iloc[2][0]:
+        return "3"
+    else:
+        return "4"
+
+
+ans["25%_flg"] = ans["amount"].apply(func_25points)
+ans.head(10)
+
+# %%
+# 056
+ans = df_customer[["customer_id", "birth_day", "age"]]
+ans["age_layer"] = ans["age"].apply(lambda x: x // 10*10 if x < 60 else 60)
+ans.head(10)
+# %%
+# 057
+ans = pd.merge(ans, df_customer[["customer_id", "gender_cd"]],
+               how="left", on="customer_id")
+ans["AL*10+GC"] = ans["age_layer"].astype("str") + \
+    ans["gender_cd"].astype("str")
+ans.head(10)
+# %%
+# 058
+df_customer[["0", "1", "9"]] = pd.get_dummies(df_customer["gender_cd"])
+df_customer[["customer_id", "0", "1", "9"]].head(10)
+
 
 # %%
