@@ -472,3 +472,11 @@ df_customer[["customer_id", "0", "1", "9"]].head(10)
 
 
 # %%
+# 59
+ans = df_receipt.query('not customer_id.str.startswith("Z")', engine="python").groupby(
+    "customer_id").amount.sum().reset_index()
+
+ans["amount_ss"] = preprocessing.scale(ans["amount"])
+ans.head(10)
+
+# %%
