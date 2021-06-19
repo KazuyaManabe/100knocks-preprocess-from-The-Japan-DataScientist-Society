@@ -12,6 +12,8 @@ import math
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
 from imblearn.under_sampling import RandomUnderSampler
+from sklearn.preprocessing import MinMaxScaler
+
 
 # %%
 df_customer = pd.read_csv(
@@ -472,6 +474,7 @@ df_customer[["customer_id", "0", "1", "9"]].head(10)
 
 
 # %%
+#解き直し
 # 59
 ans = df_receipt.query('not customer_id.str.startswith("Z")', engine="python").groupby(
     "customer_id").amount.sum().reset_index()
@@ -480,3 +483,40 @@ ans["amount_ss"] = preprocessing.scale(ans["amount"])
 ans.head(10)
 
 # %%
+#解き直し6月19日
+# 60
+ans = df_receipt.query('not customer_id.str.startswith("Z")', engine="python").groupby(
+    "customer_id").amount.sum().reset_index()
+ans["amount_mm"] = preprocessing.minmax_scale(ans["amount"])
+ans.head(10)
+# %%
+#解き直し6月19日
+# 61
+ans = df_receipt.query('not customer_id.str.startswith("Z")', engine="python").groupby(
+    "customer_id").amount.sum().reset_index()
+ans['amount_log10'] = np.log10(ans['amount']+1)
+ans.head(10)
+
+# %%
+#解き直し6月19日
+#62
+ans = df_receipt.query('not customer_id.str.startswith("Z")', engine="python").groupby(
+    "customer_id").amount.sum().reset_index()
+ans['amount_log'] = np.log(ans['amount']+1)
+ans.head(10)
+
+# %%
+#解き直し6月19日
+#63
+tmp = df_product.dropna()
+tmp["unit_profit"] = tmp["unit_price"]-tmp["unit_cost"]
+tmp.head(10)
+#ans = df_product.
+#ans
+# %%
+#64
+tmp = df_product.copy()
+tmp["unit_profit_rate"]= (tmp["unit_price"]-tmp["unit_cost"])/tmp["unit_price"]
+tmp["unit_profit_rate"].mean(skipna=True)
+# %%
+#65
