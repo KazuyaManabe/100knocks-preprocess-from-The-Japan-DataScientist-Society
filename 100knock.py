@@ -568,7 +568,7 @@ df_product
 
 #%%
 df_tmp_1=pd.merge(df_receipt,df_product,how="inner",on="product_cd")
-df_tmp_1=df_tmp_1.groupby("customer_id").aggregate({"amount":"sum"})
+df_tmp_1=df_tmp_1.groupby("customer_id").aggregate({"amount":"sum"}).reset_index()
 df_tmp_1
 #%%
-df_tmp_2=pd.merge(df_receipt,df_product,how="inner",on="product_cd")
+df_tmp_2=pd.merge(df_receipt,df_product.query("product_cd==07"),how="inner",on="product_cd").groupby("customer_id").aggregate({"amount":"sum"}).reset_index()
