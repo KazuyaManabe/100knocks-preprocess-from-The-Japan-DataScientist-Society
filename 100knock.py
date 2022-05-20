@@ -549,3 +549,8 @@ tmp[:10]
 # P-068: 商品データフレーム（df_product）の各商品について、消費税率10%の税込み金額を求めよ。 
 # 1円未満の端数は切り捨てとし、結果は10件表示すれば良い。
 # ただし、単価（unit_price）にはNULLが存在することに注意せよ。
+
+tmp = df_product.copy().dropna()
+tmp["tax_unit_price"] = tmp["unit_price"].apply(lambda x: np.floor(x*1.1))
+tmp[:10]
+# %%
