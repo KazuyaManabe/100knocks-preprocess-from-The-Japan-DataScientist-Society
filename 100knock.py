@@ -554,3 +554,21 @@ tmp = df_product.copy().dropna()
 tmp["tax_unit_price"] = tmp["unit_price"].apply(lambda x: np.floor(x*1.1))
 tmp[:10]
 # %%
+# P-069: 
+# レシート明細データフレーム（df_receipt）と商品データフレーム（df_product）を結合し、
+# 顧客毎に全商品の売上金額合計と、
+# カテゴリ大区分（category_major_cd）が"07"（瓶詰缶詰）の売上金額合計を計算の上、
+# 両者の比率を求めよ。
+# 抽出対象はカテゴリ大区分"07"（瓶詰缶詰）の購入実績がある顧客のみとし、
+# 結果は10件表示させればよい。
+df_receipt
+
+#%%
+df_product
+
+#%%
+df_tmp_1=pd.merge(df_receipt,df_product,how="inner",on="product_cd")
+df_tmp_1=df_tmp_1.groupby("customer_id").aggregate({"amount":"sum"})
+df_tmp_1
+#%%
+df_tmp_2=pd.merge(df_receipt,df_product,how="inner",on="product_cd")
