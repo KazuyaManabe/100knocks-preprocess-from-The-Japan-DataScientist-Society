@@ -11,7 +11,7 @@ from dateutil.relativedelta import relativedelta
 import math
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
-from imblearn.under_sampling import RandomUnderSampler
+#from imblearn.under_sampling import RandomUnderSampler
 from sklearn.preprocessing import MinMaxScaler
 
 
@@ -518,5 +518,34 @@ tmp.head(10)
 tmp = df_product.copy()
 tmp["unit_profit_rate"]= (tmp["unit_price"]-tmp["unit_cost"])/tmp["unit_price"]
 tmp["unit_profit_rate"].mean(skipna=True)
+tmp
 # %%
 #65
+#P-065: 商品データフレーム（df_product）の各商品について、利益率が30%となる新たな単価を求めよ。
+# ただし、1円未満は切り捨てること。そして結果を10件表示させ、利益率がおよそ30％付近であることを確認せよ。ただし、単価（unit_price）と原価（unit_cost）にはNULLが存在することに注意せよ。
+tmp = df_product.copy()
+tmp["new_unit_price"] = tmp["unit_cost"].apply(lambda x: np.floor(x/0.7))
+tmp["new_profit_rate"]=(tmp["new_unit_price"]-tmp["unit_cost"])/tmp["new_unit_price"]
+tmp[:10]
+
+#%% 
+# 66
+tmp = df_product.copy().dropna()
+tmp["new_unit_price"] = tmp["unit_cost"].apply(lambda x: round(x/0.7))
+tmp["new_profit_rate"]=(tmp["new_unit_price"]-tmp["unit_cost"])/tmp["new_unit_price"]
+tmp[:10]
+
+# %%
+# # P-067: 商品データフレーム（df_product）の各商品について、利益率が30%となる新たな単価を求めよ。
+# 今回は、1円未満を切り上げること。
+# そして結果を10件表示させ、利益率がおよそ30％付近であることを確認せよ。
+# ただし、単価（unit_price）と原価（unit_cost）にはNULLが存在することに注意せよ。
+
+tmp = df_product.copy().dropna()
+tmp["new_unit_price"] = tmp["unit_cost"].apply(lambda x: math.ceil(x/0.7))
+tmp["new_profit_rate"]=(tmp["new_unit_price"]-tmp["unit_cost"])/tmp["new_unit_price"]
+tmp[:10]
+# %%
+# P-068: 商品データフレーム（df_product）の各商品について、消費税率10%の税込み金額を求めよ。 
+# 1円未満の端数は切り捨てとし、結果は10件表示すれば良い。
+# ただし、単価（unit_price）にはNULLが存在することに注意せよ。
