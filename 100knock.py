@@ -1,3 +1,4 @@
+#%%
 # ここからもらいました
 # https://github.com/noguhiro2002/100knocks-preprocess_ForColab-AzureNotebook/blob/master/preprocess_knock_Python_Colab.ipynb
 
@@ -567,8 +568,25 @@ df_receipt
 df_product
 
 #%%
-df_tmp_1=pd.merge(df_receipt,df_product,how="inner",on="product_cd")
-df_tmp_1=df_tmp_1.groupby("customer_id").aggregate({"amount":"sum"}).reset_index()
+df_tmp_1=pd.merge(df_receipt,df_product,how="inner",on="product_cd").groupby("customer_id").aggregate({"amount":"sum"}).reset_index()
+df_tmp_1
+
+#%%
+df_tmp_1 = df_tmp_1.rename(columns={"amount": "all_amount"})
+
+#%%
+df_product["category_major_cd"].unique()
 df_tmp_1
 #%%
-df_tmp_2=pd.merge(df_receipt,df_product.query("product_cd==07"),how="inner",on="product_cd").groupby("customer_id").aggregate({"amount":"sum"}).reset_index()
+df_tmp_2=pd.merge(df_receipt,df_product.query("category_major_cd==7"),how="inner",on="product_cd").groupby("customer_id").aggregate({"amount":"sum"}).reset_index()
+df_tmp_2
+#%%
+df_tmp_2 = df_tmp_2.rename(columns={"amount": "7_amount"})
+df_tmp_2
+# %%
+df_tmp_3=pd.merge(df_tmp_1,df_tmp_2,how="outer",on="customer_id")
+df_tmp_3
+# %%
+df_tmp_3["ratio"]=(df_tmp_3["7_amount"]/df_tmp_3["all_amount"]).apply(lambda x: x*100)
+df_tmp_3
+# %%
