@@ -587,6 +587,40 @@ df_tmp_2
 df_tmp_3=pd.merge(df_tmp_1,df_tmp_2,how="outer",on="customer_id")
 df_tmp_3
 # %%
-df_tmp_3["ratio"]=(df_tmp_3["7_amount"]/df_tmp_3["all_amount"]).apply(lambda x: x*100)
-df_tmp_3
+df_tmp_3["ratio"]=df_tmp_3["7_amount"]/df_tmp_3["all_amount"]
+df_tmp_3[:10]
+# %%
+# P-070: レシート明細データフレーム（df_receipt）の売上日（sales_ymd）に対し、
+# 顧客データフレーム（df_customer）の会員申込日（application_date）からの経過日数を計算し、
+# 顧客ID（customer_id）、売上日、会員申込日とともに表示せよ。
+# 結果は10件表示させれば良い
+# （なお、sales_ymdは数値、application_dateは文字列でデータを保持している点に注意）。
+
+df_receipt["sales_ymd"]
+
+# %%
+df_customer["application_date"]
+# %%
+df_tmp = pd.merge(df_receipt,df_customer,how="inner",on="customer_id")
+df_tmp
+#%%
+#df_tmp[["sales_ymd","application_date"]]
+# %%
+df_tmp = pd.merge(df_receipt[['customer_id', 'sales_ymd']], df_customer[['customer_id', 'application_date']],
+                 how='inner', on='customer_id')
+df_tmp
+# %%
+df_tmp = df_tmp.drop_duplicates()
+df_tmp
+# %%
+df_tmp['sales_ymd'] = pd.to_datetime(df_tmp['sales_ymd'].astype('str'))
+df_tmp
+
+#%%
+df_tmp['application_date'] = pd.to_datetime(df_tmp['application_date'])
+df_tmp
+
+#%%
+df_tmp['elapsed_date'] = df_tmp['sales_ymd'] - df_tmp['application_date']
+df_tmp.head(10)
 # %%
